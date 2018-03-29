@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: A starter AWS Lambda function.
+Resources:
+  SamLambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: sam_lambda_functoin
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      CodeUri: .
+      Role: !GetAtt samLambdaRole.Arn
+      Description: basic lambda
+      MemorySize: 128
+      Timeout: 3
+
+
+
+  samLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: sam-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: sam-lambda-role-log-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                Resource:
+                  - arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                Resource:
+                  - arn:aws:logs:*:*:*
